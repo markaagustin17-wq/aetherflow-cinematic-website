@@ -1,11 +1,50 @@
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Calendar, Sparkles } from 'lucide-react';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export function CTA() {
+  const ctaRef = useRef<HTMLElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // Soft reveal on scroll
+      gsap.from(ctaRef.current, {
+        scrollTrigger: {
+          trigger: ctaRef.current,
+          start: 'top 80%',
+        },
+        opacity: 0,
+        y: 40,
+        scale: 0.98,
+        duration: 1,
+        ease: 'power3.out',
+      });
+
+      // Continuous pulse for background glow
+      gsap.to(glowRef.current, {
+        scale: 1.1,
+        opacity: 0.7,
+        duration: 3,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut',
+      });
+    }, ctaRef);
+
+    return () => mm.revert();
+  }, []);
+
   return (
-    <section id="cta" className="py-24 md:py-32 relative z-10 overflow-hidden bg-[#030303] scroll-mt-[140px]">
+    <section id="cta" ref={ctaRef} className="py-24 md:py-32 relative z-10 overflow-hidden bg-[#030303] scroll-mt-[140px]">
       {/* Background glow for CTA */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-brand-blue)]/5 to-transparent pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-full bg-[var(--color-brand-blue)]/10 blur-[150px] rounded-full pointer-events-none" />
+      <div ref={glowRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-full bg-[var(--color-brand-blue)]/10 blur-[150px] rounded-full pointer-events-none" />
       
       <div className="container mx-auto px-6 lg:px-12 relative z-20">
         <div className="relative glass-panel p-8 md:p-16 lg:p-24 text-center rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_50px_rgba(0,240,255,0.15)] overflow-hidden group">

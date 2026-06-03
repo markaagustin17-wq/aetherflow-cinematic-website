@@ -9,25 +9,40 @@ export function Hero() {
   const dashboardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Glow and subtle scaling for hero background
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // Aurora Background Movement
       gsap.to('.hero-glow', {
-        scale: 1.1,
-        opacity: 0.6,
-        duration: 4,
+        x: 'random(-20, 20)',
+        y: 'random(-20, 20)',
+        scale: 1.05,
+        opacity: 0.7,
+        duration: 6,
         yoyo: true,
         repeat: -1,
         ease: 'sine.inOut',
       });
 
+      // Floating Dashboard (starts after entrance)
+      gsap.to(dashboardRef.current, {
+        y: -15,
+        duration: 4,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut',
+        delay: 1.7,
+      });
+
       // Text entrance
       gsap.from(textRef.current?.children || [], {
-        y: 40,
+        y: 30,
         opacity: 0,
-        duration: 1,
-        stagger: 0.2,
+        filter: 'blur(8px)',
+        duration: 1.2,
+        stagger: 0.15,
         ease: 'power3.out',
-        delay: 0.2,
+        delay: 0.1,
       });
 
       // Buttons entrance
@@ -35,18 +50,18 @@ export function Hero() {
         y: 20,
         opacity: 0,
         duration: 0.8,
-        stagger: 0.15,
+        stagger: 0.1,
         ease: 'power3.out',
-        delay: 0.8,
+        delay: 0.7,
       });
 
       // Dashboard entrance
       gsap.from(dashboardRef.current, {
-        x: 40,
         opacity: 0,
+        y: 40,
         duration: 1.2,
         ease: 'power3.out',
-        delay: 0.6,
+        delay: 0.5,
       });
 
       // Dashboard cards stagger
@@ -54,13 +69,24 @@ export function Hero() {
         x: 20,
         opacity: 0,
         duration: 0.8,
-        stagger: 0.2,
+        stagger: 0.15,
         ease: 'power3.out',
-        delay: 1.2,
+        delay: 1.0,
+      });
+
+      // Pulse status indicators inside dashboard
+      gsap.to('.status-indicator', {
+        opacity: 0.4,
+        scale: 0.9,
+        duration: 1.5,
+        yoyo: true,
+        repeat: -1,
+        stagger: 0.2,
+        ease: 'sine.inOut',
       });
     }, heroRef);
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }, []);
 
   return (
@@ -114,9 +140,9 @@ export function Hero() {
             <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-white/10 shadow-2xl relative z-10 backdrop-blur-xl bg-black/40">
               <div className="flex items-center justify-between mb-6 sm:mb-8 border-b border-white/5 pb-4">
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500/80" />
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500/80" />
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500/80" />
+                  <div className="status-indicator w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500/80" />
+                  <div className="status-indicator w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500/80" />
+                  <div className="status-indicator w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500/80" />
                 </div>
                 <div className="text-[10px] sm:text-xs text-[var(--color-brand-blue)] font-mono tracking-wider flex items-center gap-2">
                   <span className="relative flex h-2 w-2">

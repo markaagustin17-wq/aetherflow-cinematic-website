@@ -1,5 +1,10 @@
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MonitorSmartphone, Bot, Network, CalendarClock } from 'lucide-react';
 import { cn } from '../lib/utils';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const services = [
   {
@@ -33,8 +38,30 @@ const services = [
 ];
 
 export function Services() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.from('.service-card', {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 70%',
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power3.out',
+      });
+    }, sectionRef);
+
+    return () => mm.revert();
+  }, []);
+
   return (
-    <section id="services" className="py-24 md:py-32 relative z-10 bg-[#050505] overflow-hidden scroll-mt-[140px]">
+    <section id="services" ref={sectionRef} className="py-24 md:py-32 relative z-10 bg-[#050505] overflow-hidden scroll-mt-[140px]">
       {/* Background Glows */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-[var(--color-brand-blue)]/20 to-transparent" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-[var(--color-brand-blue)]/5 blur-[120px] rounded-full pointer-events-none" />
@@ -64,7 +91,7 @@ export function Services() {
               <div 
                 key={idx} 
                 className={cn(
-                  "group relative p-6 md:p-10 rounded-[2rem] transition-all duration-500 ease-out",
+                  "service-card group relative p-6 md:p-10 rounded-[2rem] transition-all duration-500 ease-out",
                   "bg-gradient-to-b from-white/[0.03] to-transparent border border-white/10 backdrop-blur-xl",
                   "hover:-translate-y-2 hover:bg-white/[0.05]",
                   isBlue ? "hover:border-[var(--color-brand-blue)]/40 hover:shadow-[0_10px_40px_-10px_rgba(0,240,255,0.2)]" 

@@ -58,26 +58,38 @@ export function Process() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
       const cards = gsap.utils.toArray('.process-card');
       
-      cards.forEach((card: any, i) => {
+      cards.forEach((card: any) => {
         gsap.from(card, {
           scrollTrigger: {
             trigger: card,
-            start: 'top bottom-=100',
-            toggleActions: 'play none none reverse'
+            start: 'top 85%',
           },
           opacity: 0,
-          y: 50,
-          duration: 0.6,
-          delay: i * 0.1,
-          ease: 'power2.out'
+          y: 30,
+          duration: 0.8,
+          ease: 'power3.out'
         });
+      });
+
+      // Timeline draw effect
+      gsap.to('.timeline-glow', {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 50%',
+          end: 'bottom 80%',
+          scrub: 1,
+        },
+        height: '100%',
+        ease: 'none'
       });
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }, []);
 
   return (
@@ -105,7 +117,9 @@ export function Process() {
 
         <div className="max-w-5xl mx-auto relative">
           {/* Vertical Line with Glow */}
-          <div className="absolute left-[50%] -translate-x-1/2 top-8 bottom-8 w-[2px] bg-gradient-to-b from-transparent via-[var(--color-brand-blue)]/30 to-transparent hidden md:block" />
+          <div className="absolute left-[50%] -translate-x-1/2 top-8 bottom-8 w-[2px] bg-white/5 hidden md:block">
+            <div className="timeline-glow w-full h-0 bg-gradient-to-b from-[var(--color-brand-blue)] to-[var(--color-brand-purple)] shadow-[0_0_20px_rgba(0,240,255,0.8)]" />
+          </div>
 
           <div className="space-y-8 md:space-y-16">
             {steps.map((step, idx) => {

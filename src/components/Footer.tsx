@@ -1,8 +1,34 @@
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Cpu, Mail, Calendar } from 'lucide-react';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.from(footerRef.current, {
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 90%',
+        },
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        ease: 'power3.out',
+      });
+    }, footerRef);
+
+    return () => mm.revert();
+  }, []);
+
   return (
-    <footer id="footer" className="border-t border-white/10 bg-[#050505] relative z-10 pt-16 pb-8 overflow-hidden scroll-mt-[140px]">
+    <footer id="footer" ref={footerRef} className="border-t border-white/10 bg-[#050505] relative z-10 pt-16 pb-8 overflow-hidden scroll-mt-[140px]">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-[var(--color-brand-blue)]/30 to-transparent" />
       
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
