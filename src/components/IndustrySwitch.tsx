@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { cn } from '../lib/utils';
 import { Home, Stethoscope, Scissors, GraduationCap, Wrench, ArrowRight } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const industries = [
   { 
@@ -65,14 +68,34 @@ function ActiveCardContent({ active }: { active: typeof industries[0] }) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (contentRef.current) {
-      const elements = contentRef.current.querySelectorAll('.animate-on-switch');
+    const ctx = gsap.context(() => {
+      const elements = gsap.utils.toArray('.animate-on-switch');
+      
       gsap.fromTo(
         elements,
         { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out', overwrite: true }
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, delay: 0.1, ease: 'power3.out', overwrite: true }
       );
-    }
+
+      const steps = gsap.utils.toArray('.workflow-step');
+      if (steps.length > 0) {
+        gsap.fromTo(
+          steps,
+          { opacity: 0.4, scale: 0.95 },
+          { 
+            opacity: 1, 
+            scale: 1, 
+            duration: 0.5, 
+            stagger: 0.15, 
+            delay: 0.4,
+            ease: 'power2.out',
+            overwrite: true
+          }
+        );
+      }
+    }, contentRef);
+
+    return () => ctx.revert();
   }, [active]);
 
   return (
@@ -92,9 +115,9 @@ function ActiveCardContent({ active }: { active: typeof industries[0] }) {
             {active.description}
           </p>
 
-          <div className="animate-on-switch grid sm:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8 max-w-2xl">
+          <div className="grid sm:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8 max-w-2xl">
             {active.features.map((item, i) => (
-              <div key={i} className="flex items-start gap-3">
+              <div key={i} className="animate-on-switch flex items-start gap-3">
                 <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-[var(--color-brand-purple)]/30 flex flex-shrink-0 items-center justify-center mt-0.5 border border-[var(--color-brand-purple)]/50 shadow-[0_0_10px_rgba(112,0,255,0.2)]">
                   <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]" />
                 </div>
@@ -115,7 +138,7 @@ function ActiveCardContent({ active }: { active: typeof industries[0] }) {
               <React.Fragment key={idx}>
                 <div className="flex flex-col items-center gap-2 shrink-0">
                   <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border transition-colors", 
+                    "workflow-step w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border transition-colors", 
                     idx === 4 ? "bg-[var(--color-brand-blue)] text-black border-[var(--color-brand-blue)] shadow-[0_0_15px_rgba(0,240,255,0.5)]" : "glass-panel text-white border-white/30"
                   )}>
                     {idx + 1}
@@ -140,7 +163,7 @@ function ActiveCardContent({ active }: { active: typeof industries[0] }) {
             ].map((step, idx) => (
               <div key={idx} className="flex items-center gap-1 shrink-0">
                 <div className={cn(
-                  "px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border",
+                  "workflow-step px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border",
                   idx === 4 ? "bg-[var(--color-brand-blue)] text-black border-[var(--color-brand-blue)] shadow-[0_0_10px_rgba(0,240,255,0.4)]" : "glass-panel text-slate-200 border-white/20 bg-white/5"
                 )}>
                   {step}
@@ -160,16 +183,16 @@ function ActiveCardContent({ active }: { active: typeof industries[0] }) {
       </div>
 
       {/* 3 Metric Cards at Bottom */}
-      <div className="animate-on-switch relative z-20 mx-4 mb-5 md:mx-8 md:mb-8 grid grid-cols-3 gap-1.5 md:gap-4 mt-auto">
-        <div className="p-1.5 md:p-5 rounded-2xl text-center glass-panel bg-black/50 border-white/10 hover:border-[var(--color-brand-blue)]/30 hover:bg-black/70 transition-all shadow-lg backdrop-blur-md">
+      <div className="relative z-20 mx-4 mb-5 md:mx-8 md:mb-8 grid grid-cols-3 gap-1.5 md:gap-4 mt-auto">
+        <div className="animate-on-switch p-1.5 md:p-5 rounded-2xl text-center glass-panel bg-black/50 border-white/10 hover:border-[var(--color-brand-blue)]/30 hover:bg-black/70 transition-all shadow-lg backdrop-blur-md">
           <p className="text-[var(--color-brand-blue)] font-black text-sm md:text-3xl mb-0.5 md:mb-1">24/7</p>
           <p className="text-[7px] md:text-[11px] text-slate-300 font-bold uppercase tracking-wider leading-tight">Lead<br className="hidden md:block" /> Capture</p>
         </div>
-        <div className="p-1.5 md:p-5 rounded-2xl text-center glass-panel bg-black/50 border-white/10 hover:border-[var(--color-brand-purple)]/30 hover:bg-black/70 transition-all shadow-lg backdrop-blur-md">
+        <div className="animate-on-switch p-1.5 md:p-5 rounded-2xl text-center glass-panel bg-black/50 border-white/10 hover:border-[var(--color-brand-purple)]/30 hover:bg-black/70 transition-all shadow-lg backdrop-blur-md">
           <p className="text-[var(--color-brand-purple)] font-black text-sm md:text-3xl mb-0.5 md:mb-1">3x</p>
           <p className="text-[7px] md:text-[11px] text-slate-300 font-bold uppercase tracking-wider leading-tight">Faster<br className="hidden md:block" /> Follow-Up</p>
         </div>
-        <div className="p-1.5 md:p-5 rounded-2xl text-center glass-panel bg-black/50 border-white/10 hover:border-white/30 hover:bg-black/70 transition-all shadow-lg backdrop-blur-md">
+        <div className="animate-on-switch p-1.5 md:p-5 rounded-2xl text-center glass-panel bg-black/50 border-white/10 hover:border-white/30 hover:bg-black/70 transition-all shadow-lg backdrop-blur-md">
           <p className="text-white font-black text-sm md:text-3xl mb-0.5 md:mb-1">More</p>
           <p className="text-[7px] md:text-[11px] text-slate-300 font-bold uppercase tracking-wider leading-tight">Qualified<br className="hidden md:block" /> Leads</p>
         </div>
@@ -180,14 +203,87 @@ function ActiveCardContent({ active }: { active: typeof industries[0] }) {
 
 export function IndustrySwitch() {
   const [activeIndustry, setActiveIndustry] = useState(industries[0]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const activeIdRef = useRef(industries[0].id);
+
   const inactiveIndustries = industries.filter(industry => industry.id !== activeIndustry.id);
 
+  const handleIndustryClick = (ind: typeof industries[0]) => {
+    if (activeIndustry.id === ind.id) return;
+    setActiveIndustry(ind);
+    
+    // Sync scroll position on desktop
+    const trigger = ScrollTrigger.getAll().find(st => st.trigger === sectionRef.current);
+    if (trigger && window.innerWidth >= 1024) {
+      const index = industries.findIndex(i => i.id === ind.id);
+      const progress = index / (industries.length - 1);
+      const targetScroll = trigger.start + (trigger.end - trigger.start) * progress;
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    activeIdRef.current = activeIndustry.id;
+  }, [activeIndustry]);
+
+  useEffect(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 1024px)", () => {
+      // Desktop pinning
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=6000',
+        pin: true,
+        scrub: true,
+        onUpdate: (self) => {
+          const rawIndex = Math.round(self.progress * (industries.length - 1));
+          const index = Math.max(0, Math.min(industries.length - 1, rawIndex));
+          const targetIndustry = industries[index];
+          
+          if (activeIdRef.current !== targetIndustry.id) {
+            setActiveIndustry(targetIndustry);
+          }
+        }
+      });
+
+      // Simple header reveal
+      gsap.from('.industry-showcase-header', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+        }
+      });
+    });
+
+    mm.add("(max-width: 1023px)", () => {
+      // Mobile reveal
+      gsap.from('.industry-showcase-mobile', {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 85%',
+        }
+      });
+    });
+
+    return () => mm.revert();
+  }, []);
+
   return (
-    <section id="industries" className="pt-[140px] md:pt-48 pb-24 relative z-10 overflow-visible scroll-mt-[140px]">
+    <section id="industries" ref={sectionRef} className="pt-[140px] md:pt-48 pb-24 relative z-10 overflow-visible">
       <div className="container mx-auto px-6 lg:px-12 overflow-visible">
         
         {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
+        <div className="industry-showcase-header text-center mb-12 md:mb-16 max-w-3xl mx-auto">
           <div className="inline-block px-4 py-1.5 rounded-full glass-panel text-[var(--color-brand-blue)] text-xs md:text-sm font-bold mb-4 uppercase tracking-widest shadow-[0_0_15px_rgba(0,240,255,0.2)] border-white/10">
             Industry Solutions
           </div>
@@ -214,9 +310,9 @@ export function IndustrySwitch() {
             return (
               <div
                 key={`desktop-${ind.id}`}
-                onClick={() => !isActive && setActiveIndustry(ind)}
+                onClick={() => handleIndustryClick(ind)}
                 className={cn(
-                  "absolute top-0 bottom-0 transition-all duration-[800ms] ease-[cubic-bezier(0.23,1,0.32,1)] rounded-[2.5rem] overflow-hidden group",
+                  "absolute top-0 bottom-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.23,1,0.32,1)] rounded-[2.5rem] overflow-hidden group",
                   isActive 
                     ? "shadow-[0_0_80px_rgba(0,240,255,0.25)] border-2 border-[var(--color-brand-blue)]/60 bg-black cursor-default"
                     : `glass-panel border-white/10 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] shadow-[0_0_30px_rgba(0,0,0,0.8)] bg-[#0a0a0a]/95 backdrop-blur-3xl cursor-pointer border hover:border-white/30`
@@ -235,7 +331,7 @@ export function IndustrySwitch() {
                 )}
 
                 {/* Cinematic Background Image for Active Card */}
-                <div className={cn("absolute inset-0 z-0 transition-opacity duration-[800ms]", isActive ? "opacity-100" : "opacity-0")}>
+                <div className={cn("absolute inset-0 z-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.23,1,0.32,1)]", isActive ? "opacity-100 scale-100" : "opacity-0 scale-110")}>
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/90 to-black/30 z-10" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-transparent z-10" />
                   <div className="absolute inset-0 bg-[var(--color-brand-blue)]/5 mix-blend-overlay z-10" />
@@ -273,7 +369,7 @@ export function IndustrySwitch() {
         </div>
 
         {/* --- MOBILE VIEW --- */}
-        <div className="lg:hidden flex flex-col mt-4">
+        <div className="industry-showcase-mobile lg:hidden flex flex-col mt-4">
           {/* Active Card */}
           <div className="relative w-full rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,240,255,0.15)] border-[var(--color-brand-blue)]/40 border bg-black mb-6">
             <div className="absolute inset-0 z-0">
@@ -295,7 +391,7 @@ export function IndustrySwitch() {
               {inactiveIndustries.map((ind, i) => (
                 <button
                   key={`mobile-${ind.id}`}
-                  onClick={() => setActiveIndustry(ind)}
+                  onClick={() => handleIndustryClick(ind)}
                   className={cn(
                     "snap-center shrink-0 w-auto min-w-[150px] p-3 rounded-2xl flex items-center justify-between transition-all glass-panel border-white/10 hover:border-[var(--color-brand-blue)]/30 hover:bg-white/5 bg-[#0a0a0a]/80 shadow-lg",
                     i === inactiveIndustries.length - 1 ? "mr-4" : ""
