@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "system-ui", "sans-serif";
+  --color-brand-blue: #00f0ff;
+  --color-brand-purple: #7000ff;
+  --color-brand-dark: #0a0a0a;
+  --color-brand-darker: #050505;
+  --color-glass: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass-hover: rgba(255, 255, 255, 0.05);
+
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 10px -5px var(--color-brand-blue), 0 0 20px -5px var(--color-brand-purple);
+    }
+    to {
+      box-shadow: 0 0 20px 0px var(--color-brand-blue), 0 0 40px 0px var(--color-brand-purple);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-[var(--color-glass)] backdrop-blur-xl border border-[var(--color-glass-border)] rounded-2xl;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-brand-blue)] to-[var(--color-brand-purple)];
+  }
+
+  .bg-cinematic {
+    @apply bg-[#050505] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#050505] to-[#050505];
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-[#050505] text-slate-200 antialiased font-sans selection:bg-[var(--color-brand-blue)] selection:text-black overflow-x-hidden;
+  }
+}
